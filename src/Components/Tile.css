@@ -1,0 +1,13 @@
+.tile {
+    display:grid;
+    place-content:center;
+    width: 65px;
+}
+
+.black-tile {
+    background-color: #C4A484;
+}
+
+.white-tile {
+    background-color: floralwhite;
+}

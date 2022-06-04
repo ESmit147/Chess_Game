@@ -1,0 +1,6 @@
+#chess{
+    display:grid;
+    place-content:center;
+    height: 100vh;
+    background-color: beige;
+}

@@ -1,78 +1,106 @@
 
 import Tile from "./Tile.js"
 import './Board.css';
+import React from 'react';
 
 const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
 const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
 const startingPos = new Map();
-    
-startingPos.set([1, "a"], "Assets/rook_w.png");
+
+const piece = {
+    x: Number,
+    y : Number,
+    image : String
+}
+
+//list of pieces original position
+const pieces = [];
+
+//tracker for moving pieces
+let activePiece = null;
+
+//function to pick up a piece from the board
+function grabPiece(e) {
+    const element = e.target;
+    if (element.classList.contains("chess-piece")) {
+       
+        const x = e.clientX - 32.5;
+        const y = e.clientY-32.5;
+        element.style.position = "absolute";
+        element.style.left = `${x}px`;
+        element.style.top = `${y}px`;
+
+        activePiece = element;
+    }
+}
+
+//function to move a piece with mouse poisition
+function movePiece(e) {
+    const element = e.target;
+
+    if (activePiece) {
+        const x = e.clientX - 32.5;
+        const y = e.clientY - 32.5;
+        activePiece.style.position = "absolute";
+        activePiece.style.left = `${x}px`;
+        activePiece.style.top = `${y}px`;
+    }
+}
+
+
+function dropPiece(e) {
+    if (activePiece)
+        activePiece = null; 
+}
 
 
 export default function Board() {
-    setStartPos();
     let board = []
-
-    
-    console.log(startingPos.get("1 + a"))
 
     for (let j = verticalAxis.length - 1; j >= 0; j--) {
         for (let i = 0; i < horizontalAxis.length; i++) {
+            let image = undefined;
 
-            if (startingPos.has(verticalAxis[j] + " + " + horizontalAxis[i]))
-                board.push(<Tile number={i + j} image={startingPos.get(verticalAxis[j] + " + " + horizontalAxis[i])} />)
-            else
-                board.push(<Tile number={i + j}/>)
+            pieces.forEach((p) => {
+                if (p.x == i && p.y == j) {
+                    image = p.image;
+                }
+            });
+
+            board.push(<Tile key={ i + "." + j} image={image} number = {i + j} />);
+
         }
     }
-    return <div id="board" >{board}</div>
+    return <div onMouseMove={(e) => movePiece(e)} onMouseUp={(e) => dropPiece(e)} onMouseDown={(e) => grabPiece(e)} id="board" >{board}</div>
 }
 
 
 
-function setStartPos() {
-    startingPos.set("1 + a", "Assets/rook_w.png"); //rook w
-    startingPos.set("1 + b", "Assets/knight_w.png"); //knight w
-    startingPos.set("1 + c", "Assets/bishop_w.png"); //bishop w
-    startingPos.set("1 + d", "Assets/king_w.png"); //king w
-    startingPos.set("1 + e", "Assets/queen_w.png"); //queen w
-    startingPos.set("1 + f", "Assets/bishop_w.png"); //bishop w
-    startingPos.set("1 + g", "Assets/knight_w.png"); //knight w
-    startingPos.set("1 + h", "Assets/rook_w.png"); //rook w
 
-    startingPos.set("2 + a", "Assets/pawn_w.png"); //pawn w
-    startingPos.set("2 + b", "Assets/pawn_w.png"); //pawn w
-    startingPos.set("2 + c", "Assets/pawn_w.png"); //pawn w
-    startingPos.set("2 + d", "Assets/pawn_w.png"); //pawn w
-    startingPos.set("2 + e", "Assets/pawn_w.png"); //pawn w
-    startingPos.set("2 + f", "Assets/pawn_w.png"); //pawn w
-    startingPos.set("2 + g", "Assets/pawn_w.png"); //pawn w
-    startingPos.set("2 + h", "Assets/pawn_w.png"); //pawn w
+//white pawns
+for (let i = 0; i <= 7; i++) {
+    pieces.push({ x: i, y: 1, image: "Assets/pawn_w.png" });
+}
 
-
-    startingPos.set("8 + a", "Assets/rook_b.png"); //rook b
-    startingPos.set("8 + b", "Assets/knight_b.png"); //knight b
-    startingPos.set("8 + c", "Assets/bishop_b.png"); //bishop b
-    startingPos.set("8 + d", "Assets/king_b.png"); //king b
-    startingPos.set("8 + e", "Assets/queen_b.png"); //queen b
-    startingPos.set("8 + f", "Assets/bishop_b.png"); //bishop b
-    startingPos.set("8 + g", "Assets/knight_b.png"); //knight b
-    startingPos.set("8 + h", "Assets/rook_b.png"); //rook b
-
-    startingPos.set("7 + a", "Assets/pawn_b.png"); //pawn b
-    startingPos.set("7 + b", "Assets/pawn_b.png"); //pawn b
-    startingPos.set("7 + c", "Assets/pawn_b.png"); //pawn b
-    startingPos.set("7 + d", "Assets/pawn_b.png"); //pawn b
-    startingPos.set("7 + e", "Assets/pawn_b.png"); //pawn b
-    startingPos.set("7 + f", "Assets/pawn_b.png"); //pawn b
-    startingPos.set("7 + g", "Assets/pawn_b.png"); //pawn b
-    startingPos.set("7 + h", "Assets/pawn_b.png"); //pawn b
+//black pawns
+for (let i = 0; i <= 7; i++) {
+    pieces.push({ x: i, y: 6, image: "Assets/pawn_b.png" });
+}
 
 
 
+for (let i = 0; i < 2; i++) {
+    const type = (i == 0) ? "b" : "w";
+    const y = (i == 0) ? 7 : 0;
 
-
-
-
+    //other black & white pieces
+    pieces.push({ x: 0, y, image: "Assets/rook_" + type + ".png" });
+    pieces.push({ x: 1, y, image: "Assets/knight_" + type + ".png" });
+    pieces.push({ x: 2, y, image: "Assets/bishop_" + type + ".png" });
+    pieces.push({ x: 3, y, image: "Assets/queen_" + type + ".png" });
+    pieces.push({ x: 4, y, image: "Assets/king_" + type + ".png" });
+    pieces.push({ x: 5, y, image: "Assets/bishop_" + type + ".png" });
+    pieces.push({ x: 6, y, image: "Assets/knight_" + type + ".png" });
+    pieces.push({ x: 7, y, image: "Assets/rook_" + type + ".png" });
 }

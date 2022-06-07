@@ -26,7 +26,7 @@ export const Team = {
     
 };
 
-const piece = {
+export const piece = {
     x: Number,
     y: Number,
     image: String,
@@ -112,28 +112,34 @@ export default function Board() {
             const x = Math.floor((e.clientX - boardRef.current.offsetLeft) / 65);
             const y = Math.abs(Math.ceil(((e.clientY - boardRef.current.offsetTop) - 520) / 65));
 
-            
+            const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY);
+            const attackedPiece = pieces.find(p => p.x == x && p.y === y);
 
+            if (currentPiece) {
+                const validMove = rules.isMoveValid(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
 
-            //Grid Snap
-            setPieces((value) => {
-                const pieces = value.map((p) => {
-                    if (p.x == gridX && p.y == gridY) {
-                        if (rules.isMoveValid(gridX, gridY, x, y, p.type, p.team)) {
-                            p.x = x;
-                            p.y = y;
+                const isEnPassant = rules.isEnPassant(x, y, pieces, currentPiece.team);
+                if (validMove) {
+                    const updatedPieces = pieces.reduce((results, piece) => {
+                        if (piece.x === gridX && piece.y === gridY) {
+                            piece.x = x;
+                            piece.y = y;
+                            results.push(piece);
                         }
-                        else {
-                            activePiece.style.position = 'relative';
-                            activePiece.style.removeProperty("top");
-                            activePiece.style.removeProperty("left");
+                        else if (!(piece.x === x && piece.y === y)) {
+                            results.push(piece);
                         }
-                        
-                    }
-                    return p;
-                });
-                return pieces;
-            });
+
+                        return results;
+                    }, []);
+                    setPieces(updatedPieces);
+                }
+                else {
+                    activePiece.style.position = 'relative';
+                    activePiece.style.removeProperty("top");
+                    activePiece.style.removeProperty("left");
+                }
+            }
           
             setActivePiece(null);
         }

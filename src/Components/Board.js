@@ -47,8 +47,13 @@ export default function Board() {
     const [gridY, SetGridY] = useState(0);
     const [pieces, setPieces] = useState(initialPieces);
     const rules = new Rules();
-
+    const [move, setMove] = useState(0);
     
+
+    function nextTurn() {
+        setMove(move + 1);
+        console.log(move);
+    }
 
     //function to pick up a piece from the board
     function grabPiece(e) {
@@ -118,8 +123,8 @@ export default function Board() {
             if (currentPiece) {
                 const validMove = rules.isMoveValid(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
 
-                const isEnPassant = rules.isEnPassant(x, y, pieces, currentPiece.team);
-                if (validMove) {
+
+                if (validMove && rules.isTurn(currentPiece.team, move)) {
                     const updatedPieces = pieces.reduce((results, piece) => {
                         if (piece.x === gridX && piece.y === gridY) {
                             piece.x = x;
@@ -129,10 +134,10 @@ export default function Board() {
                         else if (!(piece.x === x && piece.y === y)) {
                             results.push(piece);
                         }
-
                         return results;
                     }, []);
                     setPieces(updatedPieces);
+                    nextTurn();
                 }
                 else {
                     activePiece.style.position = 'relative';

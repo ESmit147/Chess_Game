@@ -2,6 +2,21 @@ import { PieceType, Team, piece } from "../Components/Board.js";
 
 export default class Rules {
 
+
+    //checks which team's move it is
+    isTurn(team, move) {
+        if (team === Team.White && move % 2 == 0) {
+            return true;
+        }
+        else if (team === Team.Black && move % 2 == 1) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    //if there is a piece in the way of movement
     pathBlocked(x, y, boardState){
         const piece = boardState.find(p => p.x === x && p.y === y);
 
@@ -10,7 +25,7 @@ export default class Rules {
         return false;
     }
 
-
+    //checks if tile has an opponent's piece
     isEnemyTile(x, y, boardState, team) {
         const piece = boardState.find((p) => p.x === x && p.y === y && p.team != team);
 
@@ -22,6 +37,7 @@ export default class Rules {
          return false;
     }
 
+    //checks the en Passant rule
     isEnPassant(x, y, boardState, team) {
         const direction = (team === Team.White) ? 1 : -1;
         const piece = boardState.find(p => p.x === x && p.y === y - direction);
@@ -30,6 +46,8 @@ export default class Rules {
             console.log("Hello");
         }
     }
+
+
 
     isMoveValid(px, py, cx, cy, type, team, boardState) {
 
@@ -59,6 +77,13 @@ export default class Rules {
                     return true;
                 }
             }
+        }
+
+        //Rook Logic
+        if (type === PieceType.Rook) {
+            
+
+            
         }
 
         

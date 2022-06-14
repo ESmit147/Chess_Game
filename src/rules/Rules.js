@@ -80,14 +80,93 @@ export default class Rules {
         }
 
         //Rook Logic
-        if (type === PieceType.Rook) {
-            
+        else if (type === PieceType.Rook) {
+            if (py === cy) {
+                if (cx > px) {
+                    for (let i = px + 1; i < cx; i++) {
+                        if (this.pathBlocked(i, cy, boardState)) {
+                            return false;
+                        }
+                    }
+                }
+                else if (cx < px) {
+                    for (let i = px - 1; i > cx; i--) {
+                        if (this.pathBlocked(i, cy, boardState)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            else if (px === cx) {
+                if (cy > py) {
+                    for (let i = py + 1; i < cy; i++) {
+                        if (this.pathBlocked(cx, i, boardState)) {
+                            return false;
+                        }
+                    }
+                }
+                else if (cy < py) {
+                    for (let i = py - 1; i > cy; i--) {
+                        if (this.isEnemyTile(cx, i, boardState)) {
+                            return false;
+                        }
+                    }
+                }
 
-            
+                
+            }
         }
 
-        
-        
+
+        //Bishop Logic
+        else if (type === PieceType.Bishop) {
+            if (Math.abs(cx - px) === Math.abs(cy - py)) {
+                console.log(px, py, cx, cy);
+                if (cx > px && cy > py) { //up right
+                    for (let i = 1; i < Math.abs(cx - px); i++) {
+                        if (this.pathBlocked(px + i, py + i, boardState)) {
+                            console.log("Blocked UR");
+                            return false;
+                        }
+                    }
+                    console.log("UR");
+                }
+                else if (cx > px && cy < py) { //down right
+                    for (let i = 1; i < Math.abs(cx - px); i++) {
+                        if (this.pathBlocked(px + i, py - i, boardState)) {
+                            console.log("Blocked DR");
+                            return false;
+                        }
+                    }
+                    console.log("DR");
+                }
+                else if (cx < px && cy > py) { //up left
+                    for (let i = 1; i < Math.abs(cx - px); i++) {
+                        if (this.pathBlocked(px - i, py + i, boardState)) {
+                            console.log("Blocked UL");
+                            return false;
+                        }
+                    }
+                    console.log("UL");
+                }
+                else if (cx < px && cy < py) { //down left
+                    for (let i = 1; i < Math.abs(cx - px); i++) {
+                        if (this.pathBlocked(px - i, py - i, boardState)) {
+                            console.log("Blocked DL");
+                            return false;
+                        }
+                    }
+                    console.log("DL");
+                }
+
+                if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
+                    return true;
+                }
+            } 
+        }
+
+
         return false;
     }
 }

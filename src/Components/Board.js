@@ -52,7 +52,6 @@ export default function Board() {
 
     function nextTurn() {
         setMove(move + 1);
-        console.log(move);
     }
 
     //function to pick up a piece from the board
@@ -77,7 +76,6 @@ export default function Board() {
 
     //function to move a piece with mouse poisition
     function movePiece(e) {
-
         if (activePiece) {
             const minX = boardRef.current.offsetLeft - 15;
             const maxX = boardRef.current.offsetLeft + boardRef.current.clientWidth-55;
@@ -116,6 +114,8 @@ export default function Board() {
         if (activePiece) {
             const x = Math.floor((e.clientX - boardRef.current.offsetLeft) / 65);
             const y = Math.abs(Math.ceil(((e.clientY - boardRef.current.offsetTop) - 520) / 65));
+
+            
 
             const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY);
             const attackedPiece = pieces.find(p => p.x == x && p.y === y);

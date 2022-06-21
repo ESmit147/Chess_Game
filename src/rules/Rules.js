@@ -96,7 +96,9 @@ export default class Rules {
                         }
                     }
                 }
-                return true;
+                if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
+                    return true;
+                }
             }
             else if (px === cx) {
                 if (cy > py) {
@@ -113,7 +115,9 @@ export default class Rules {
                         }
                     }
                 }
-
+                if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
+                    return true;
+                }
                 
             }
         }
@@ -122,48 +126,37 @@ export default class Rules {
         //Bishop Logic
         else if (type === PieceType.Bishop) {
             if (Math.abs(cx - px) === Math.abs(cy - py)) {
-                console.log(px, py, cx, cy);
-                if (cx > px && cy > py) { //up right
-                    for (let i = 1; i < Math.abs(cx - px); i++) {
-                        if (this.pathBlocked(px + i, py + i, boardState)) {
-                            console.log("Blocked UR");
-                            return false;
-                        }
+                let ycheck = (cy > py) ? 1 : -1;
+                let xcheck = (cx > px) ? 1 : -1;
+
+                for (let i = 1; i < Math.abs(cx - px); i++) {
+                    if (this.pathBlocked(px + (i * xcheck), py + (i * ycheck), boardState)) {
+                        return false;
                     }
-                    console.log("UR");
-                }
-                else if (cx > px && cy < py) { //down right
-                    for (let i = 1; i < Math.abs(cx - px); i++) {
-                        if (this.pathBlocked(px + i, py - i, boardState)) {
-                            console.log("Blocked DR");
-                            return false;
-                        }
-                    }
-                    console.log("DR");
-                }
-                else if (cx < px && cy > py) { //up left
-                    for (let i = 1; i < Math.abs(cx - px); i++) {
-                        if (this.pathBlocked(px - i, py + i, boardState)) {
-                            console.log("Blocked UL");
-                            return false;
-                        }
-                    }
-                    console.log("UL");
-                }
-                else if (cx < px && cy < py) { //down left
-                    for (let i = 1; i < Math.abs(cx - px); i++) {
-                        if (this.pathBlocked(px - i, py - i, boardState)) {
-                            console.log("Blocked DL");
-                            return false;
-                        }
-                    }
-                    console.log("DL");
                 }
 
                 if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
                     return true;
                 }
             } 
+        }
+
+        //Horse Logic 
+        if (type === PieceType.Horse) {
+            if ((Math.abs(cx - px) === 1 && Math.abs(cy - py) === 2) || (Math.abs(cx - px) === 2 && Math.abs(cy - py) === 1)) {
+                if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
+                    return true;
+                }
+            }
+        }
+
+        //King Logic
+        if (type === PieceType.King) {
+            if (Math.abs(cx - px) <= 1 && Math.abs(cy - py) <= 1) {
+                if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
+                    return true;
+                }
+            }
         }
 
 

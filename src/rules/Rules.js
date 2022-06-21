@@ -31,6 +31,9 @@ export default class Rules {
 
 
         if (piece) {
+            if (piece.type === PieceType.King) {
+                window.location.reload();
+            }
             return true;
         }
             
@@ -57,7 +60,7 @@ export default class Rules {
             const startRow = (team === Team.White) ? 1 : 6;
             const direction = (team === Team.White) ? 1 : -1;
 
-            if (py === startRow && cy - py == 2 * direction) {
+            if (py === startRow && cy - py === 2 * direction) {
                 if (!this.pathBlocked(cx, cy, boardState) && !this.pathBlocked(cx, cy - direction, boardState)) {
                     return true;
                 }
@@ -67,12 +70,12 @@ export default class Rules {
                     return true;
                 }
             }
-            else if (cx - px === -1 && cy - py == direction) {
+            else if (cx - px === -1 && cy - py === direction) {
                 if (this.isEnemyTile(cx, cy, boardState, team)) {
                     return true;
                 }
             }
-            else if (cx - px === 1 && cy - py == direction) {
+            else if (cx - px === 1 && cy - py === direction) {
                 if (this.isEnemyTile(cx, cy, boardState, team)) {
                     return true;
                 }
@@ -156,6 +159,65 @@ export default class Rules {
                 if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
                     return true;
                 }
+            }
+        }
+
+        //Queen Logic
+        if (type === PieceType.Queen) {
+            if (Math.abs(cx - px) === Math.abs(cy - py)) { //if move like bishop
+                let ycheck = (cy > py) ? 1 : -1;
+                let xcheck = (cx > px) ? 1 : -1;
+
+                for (let i = 1; i < Math.abs(cx - px); i++) {
+                    if (this.pathBlocked(px + (i * xcheck), py + (i * ycheck), boardState)) {
+                        return false;
+                    }
+                }
+
+                if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
+                    return true;
+                }
+            }
+
+            else if (py === cy) { //if move like rook right/left
+                if (cx > px) {
+                    for (let i = px + 1; i < cx; i++) {
+                        if (this.pathBlocked(i, cy, boardState)) {
+                            return false;
+                        }
+                    }
+                }
+                else if (cx < px) {
+                    for (let i = px - 1; i > cx; i--) {
+                        if (this.pathBlocked(i, cy, boardState)) {
+                            return false;
+                        }
+                    }
+                }
+                if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
+                    return true;
+                }
+            }
+
+            else if (px === cx) { //if move like rook up/down
+                if (cy > py) {
+                    for (let i = py + 1; i < cy; i++) {
+                        if (this.pathBlocked(cx, i, boardState)) {
+                            return false;
+                        }
+                    }
+                }
+                else if (cy < py) {
+                    for (let i = py - 1; i > cy; i--) {
+                        if (this.isEnemyTile(cx, i, boardState)) {
+                            return false;
+                        }
+                    }
+                }
+                if (this.isEnemyTile(cx, cy, boardState, team) || !this.pathBlocked(cx, cy, boardState)) {
+                    return true;
+                }
+
             }
         }
 

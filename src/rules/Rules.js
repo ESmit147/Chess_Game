@@ -1,14 +1,16 @@
-import { PieceType, Team, piece } from "../Components/Board.js";
+import { PieceType, Team} from "../Components/Board.js";
 
 export default class Rules {
 
+   
+    
 
     //checks which team's move it is
     isTurn(team, move) {
-        if (team === Team.White && move % 2 == 0) {
+        if (team === Team.White && move % 2 === 0) {
             return true;
         }
-        else if (team === Team.Black && move % 2 == 1) {
+        else if (team === Team.Black && move % 2 === 1) {
             return true;
         }
 
@@ -27,13 +29,10 @@ export default class Rules {
 
     //checks if tile has an opponent's piece
     isEnemyTile(x, y, boardState, team) {
-        const piece = boardState.find((p) => p.x === x && p.y === y && p.team != team);
+        const piece = boardState.find((p) => p.x === x && p.y === y && p.team !== team);
 
 
         if (piece) {
-            if (piece.type === PieceType.King) {
-                window.location.reload();
-            }
             return true;
         }
             

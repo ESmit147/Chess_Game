@@ -48,10 +48,15 @@ export default function Board() {
     const [pieces, setPieces] = useState(initialPieces);
     const rules = new Rules();
     const [move, setMove] = useState(0);
-    
+    var record=[];
 
     function nextTurn() {
         setMove(move + 1);
+    }
+
+    function recordMove(team, piece, space) {
+        record.push("" + team + "" + piece + "" + space);
+
     }
 
     //function to pick up a piece from the board
@@ -77,41 +82,25 @@ export default function Board() {
     //function to move a piece with mouse poisition
     function movePiece(e) {
         if (activePiece) {
-            const minX = boardRef.current.offsetLeft - 15;
-            const maxX = boardRef.current.offsetLeft + boardRef.current.clientWidth-55;
-            const minY = boardRef.current.offsetTop - 10;
-            const maxY = boardRef.current.offsetTop + boardRef.current.clientHeight-55;
+           
 
 
             const x = e.clientX - 32.5;
             const y = e.clientY - 32.5;
             activePiece.style.position = "absolute";
 
-            //if x is to left of board
-            if (x < minX)
-                activePiece.style.left = `${minX}px`;
-            //if x is to right of board
-            else if (x > maxX)
-                activePiece.style.left = `${maxX}px`;
-            //if x is on the board
-            else
-                activePiece.style.left = `${x}px`;
+            activePiece.style.left = `${x}px`;
+            activePiece.style.top = `${y}px`;
 
-            //if y is above the board
-            if (y < minY)
-                activePiece.style.top = `${minY}px`;
-            //if y is below the board
-            else if (y > maxY)
-                activePiece.style.top = `${maxY}px`;
-            //if y is on the board
-            else
-                activePiece.style.top = `${y}px`;
+
+            
         }
     }
 
     //function to drop a piece into a tile
     function dropPiece(e) {
         if (activePiece) {
+
             const x = Math.floor((e.clientX - boardRef.current.offsetLeft) / 65);
             const y = Math.abs(Math.ceil(((e.clientY - boardRef.current.offsetTop) - 520) / 65));
 
@@ -119,12 +108,12 @@ export default function Board() {
 
             const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY);
             const attackedPiece = pieces.find(p => p.x == x && p.y === y);
-
             if (currentPiece) {
-                const validMove = rules.isMoveValid(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces)
+                
+                const validMove = rules.isMoveValid(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces);
 
-
-                if (validMove && rules.isTurn(currentPiece.team, move)) {
+               
+                if (validMove && rules.isTurn(currentPiece.team, move) && (0 <= x && x<=8) && (0<=y && y<=8)) {
                     const updatedPieces = pieces.reduce((results, piece) => {
                         if (piece.x === gridX && piece.y === gridY) {
                             piece.x = x;
@@ -136,8 +125,11 @@ export default function Board() {
                         }
                         return results;
                     }, []);
+                    recordMove(currentPiece.team, currentPiece.type, horizontalAxis[x] + "" + verticalAxis[y]);
+                    console.log(record);
                     setPieces(updatedPieces);
                     nextTurn();
+
                 }
                 else {
                     activePiece.style.position = 'relative';

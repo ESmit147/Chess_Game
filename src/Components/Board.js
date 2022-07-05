@@ -5,9 +5,9 @@ import React from 'react';
 import { useState, useEffect, useRef } from "react";
 import Rules from "../rules/Rules.js"
 
-const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
-const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
-
+export const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
+export const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
+export var record = [];
 const startingPos = new Map();
 
 
@@ -48,14 +48,14 @@ export default function Board() {
     const [pieces, setPieces] = useState(initialPieces);
     const rules = new Rules();
     const [move, setMove] = useState(0);
-    var record=[];
+    
 
     function nextTurn() {
         setMove(move + 1);
     }
 
-    function recordMove(team, piece, space) {
-        record.push("" + team + "" + piece + "" + space);
+    function recordMove(team, piece, space, from) {
+        record.push("" + team + "" + piece + "" + space + "<-" + from);
 
     }
 
@@ -125,7 +125,7 @@ export default function Board() {
                         }
                         return results;
                     }, []);
-                    recordMove(currentPiece.team, currentPiece.type, horizontalAxis[x] + "" + verticalAxis[y]);
+                    recordMove(currentPiece.team, currentPiece.type, horizontalAxis[x] + "" + verticalAxis[y], horizontalAxis[gridX] + "" + verticalAxis[gridY]);
                     console.log(record);
                     setPieces(updatedPieces);
                     nextTurn();

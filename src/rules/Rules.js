@@ -1,4 +1,4 @@
-import { PieceType, Team} from "../Components/Board.js";
+import { PieceType, Team, record, horizontalAxis, verticalAxis } from "../Components/Board.js";
 
 export default class Rules {
 
@@ -44,8 +44,10 @@ export default class Rules {
         const direction = (team === Team.White) ? 1 : -1;
         const piece = boardState.find(p => p.x === x && p.y === y - direction);
 
-        if (piece) {
-            console.log("Hello");
+        if (record[record.length - 1] === ("" + piece.team + "Pawn" + horizontalAxis[x] + "" + verticalAxis[y - direction] + "<-" + horizontalAxis[x] + "" + verticalAxis[y + direction])) {
+            piece.x = null;
+            piece.y = null;
+            return true;
         }
     }
 
@@ -69,15 +71,14 @@ export default class Rules {
                     return true;
                 }
             }
-            else if (cx - px === -1 && cy - py === direction) {
+            else if ((cx - px === -1 || cx - px === 1) && cy - py === direction) {
                 if (this.isEnemyTile(cx, cy, boardState, team)) {
                     return true;
                 }
-            }
-            else if (cx - px === 1 && cy - py === direction) {
-                if (this.isEnemyTile(cx, cy, boardState, team)) {
+                else if (this.isEnPassant(cx, cy, boardState, team)) {
                     return true;
                 }
+                
             }
         }
 

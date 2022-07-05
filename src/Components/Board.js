@@ -2,13 +2,12 @@
 import Tile from "./Tile.js"
 import './Board.css';
 import React from 'react';
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Rules from "../rules/Rules.js"
 
 export const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
 export const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
 export var record = [];
-const startingPos = new Map();
 
 
 
@@ -59,6 +58,41 @@ export default function Board() {
 
     }
 
+    function gameOver(p) {
+        let white = false, black = false;
+        
+
+        for (let i = 0; i < p.length; i++) {
+            if (p[i].type === PieceType.King && p[i].team === Team.Black) {
+                black = true;
+            }
+            else if (p[i].type === PieceType.King && p[i].team === Team.White) {
+                white = true;
+            }
+            
+        }
+
+            if (!white) {
+                blackWins();
+            }
+            else if (!black) {
+                whiteWins();
+            }
+
+    }
+
+
+    function whiteWins() {
+        console.log("white");
+
+        //window.location.reload();
+    }
+
+    function blackWins() {
+        console.log("black");
+        //window.location.reload();
+    }
+
     //function to pick up a piece from the board
     function grabPiece(e) {
         const element = e.target;
@@ -107,7 +141,7 @@ export default function Board() {
             
 
             const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY);
-            const attackedPiece = pieces.find(p => p.x == x && p.y === y);
+           
             if (currentPiece) {
                 
                 const validMove = rules.isMoveValid(gridX, gridY, x, y, currentPiece.type, currentPiece.team, pieces);
@@ -126,8 +160,8 @@ export default function Board() {
                         return results;
                     }, []);
                     recordMove(currentPiece.team, currentPiece.type, horizontalAxis[x] + "" + verticalAxis[y], horizontalAxis[gridX] + "" + verticalAxis[gridY]);
-                    console.log(record);
                     setPieces(updatedPieces);
+                    gameOver(updatedPieces);
                     nextTurn();
 
                 }
@@ -154,7 +188,7 @@ export default function Board() {
             let image = undefined;
 
             pieces.forEach((p) => {
-                if (p.x == i && p.y == j) {
+                if (p.x === i && p.y === j) {
                     image = p.image;
                 }
             });
@@ -182,9 +216,9 @@ for (let i = 0; i <= 7; i++) {
 
 
 for (let i = 0; i < 2; i++) {
-    const type = (i == 0) ? "b" : "w";
-    const y = (i == 0) ? 7 : 0;
-    const team = (i == 0) ? Team.Black : Team.White;
+    const type = (i === 0) ? "b" : "w";
+    const y = (i === 0) ? 7 : 0;
+    const team = (i === 0) ? Team.Black : Team.White;
 
 
     //other black & white pieces

@@ -51,6 +51,27 @@ export default class Rules {
         }
     }
 
+    //provides promotion
+    isPromotion(x, y, boardState) {
+        const piece = boardState.find(p => p.x === x && p.y === y);
+        
+
+        if (piece.type === "Pawn") {
+            if (piece.team === "BLACK") {
+                if (piece.y === 0) {
+                    piece.type = PieceType.Queen;
+                    piece.image = "Assets/queen_b.png";
+                }
+            }
+            else if (piece.team === "WHITE") {
+                if (piece.y === 7) {
+                    piece.type = PieceType.Queen;
+                    piece.image = "Assets/queen_w.png";
+                }
+            }
+        }
+    }
+
 
 
     isMoveValid(px, py, cx, cy, type, team, boardState) {

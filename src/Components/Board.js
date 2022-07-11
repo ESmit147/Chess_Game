@@ -163,6 +163,7 @@ export default function Board() {
                     setPieces(updatedPieces);
                     gameOver(updatedPieces);
                     nextTurn();
+                    rules.isPromotion(x, y, pieces);
 
                 }
                 else {
